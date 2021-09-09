@@ -13,5 +13,4 @@ try {
   console.log(e);
 }
 
-
 module.exports = sum;
