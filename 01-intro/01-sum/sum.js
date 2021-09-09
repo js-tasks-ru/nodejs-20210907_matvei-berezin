@@ -3,9 +3,15 @@ function sum(a, b) {
   if (typeof a == 'number' && typeof b == 'number') {
     return a + b;
   } else {
-    return new TypeError('аргумент не число');
+    throw new TypeError('аргумент не число');
   }
 }
-console.log(sum(2, '3'));
+
+try {
+  console.log(sum(2, '3'));
+} catch (e) {
+  console.log(e);
+}
+
 
 module.exports = sum;
