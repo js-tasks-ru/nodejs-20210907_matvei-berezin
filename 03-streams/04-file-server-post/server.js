@@ -24,10 +24,11 @@ server.on('request', (req, res) => {
         flags: 'wx'
       });
 
-      const limitSizeStream = new LimitSizeStream({ limit: 1e6 });
+      const limitSizeStream = new LimitSizeStream({ limit: 1048576 });
       req.pipe(limitSizeStream).pipe(writeStream);
 
       writeStream.on('finish', () => {
+        res.statusCode = 201;
         res.end('file saved');
       });
 
