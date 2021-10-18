@@ -4,14 +4,18 @@ const {v4: uuid} = require('uuid');
 
 module.exports.oauth = async function oauth(ctx, next) {
   const provider = ctx.params.provider;
+  // console.log('provider in fn oauth : ', provider);
+  // console.log('config.providers[provider].options : ', config.providers[provider].options);
 
   await passport.authenticate(
-      provider,
-      config.providers[provider].options,
+    provider,
+    config.providers[provider].options,
   )(ctx, next);
 
   ctx.status = 200;
   ctx.body = {status: 'ok', location: ctx.response.get('location')};
+  // console.log('ctx.response.get(location) : ', ctx.response.get('location'));
+
   ctx.response.remove('location');
 };
 
