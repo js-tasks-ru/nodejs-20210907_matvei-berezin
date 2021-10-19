@@ -23,13 +23,22 @@ module.exports.oauthCallback = async function oauthCallback(ctx, next) {
   const provider = ctx.request.body.provider;
 
   await passport.authenticate(provider, async (err, user, info) => {
-    if (err) throw err;
+    if (err) {
+      if (err && err.errors && err.errors.email && err.errors.email.message === 'Некорректный email.') {
+        ctx.status = 400;
+        const massage = err.errors.email.message;
+        ctx.body = {error: massage};
+        console.log(err.errors.email.message);
+        return;
+      }
+      throw err;
+    }
 
     if (!user) {
       ctx.status = 400;
       ctx.body = {error: info};
       return;
-    }
+    };
 
     const token = uuid();
 
