@@ -26,6 +26,9 @@ module.exports = async function authenticate(strategy, email, displayName, done)
 
     done(null, user);
   } catch (error) {
+    // if (error.errors.email.message === 'Некорректный email.') {
+    //   done(null, false, error.errors.email.message);
+    // };
     done(error);
   };
   // done(null, false, `функция аутентификации с помощью ${strategy} не настроена`);
