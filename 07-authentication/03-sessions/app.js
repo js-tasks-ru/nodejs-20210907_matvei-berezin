@@ -8,6 +8,7 @@ const mustBeAuthenticated = require('./libs/mustBeAuthenticated');
 const {login} = require('./controllers/login');
 const {oauth, oauthCallback} = require('./controllers/oauth');
 const {me} = require('./controllers/me');
+const {ErrExistToken} = require('./libs/customErr');
 
 const app = new Koa();
 
@@ -30,9 +31,13 @@ app.use(async (ctx, next) => {
 });
 
 app.use((ctx, next) => {
-  ctx.login = async function(user) {
+  ctx.login = async function (user) {
     const token = uuid();
-
+    await Session.create({
+      token: token,
+      lastVisit: Date.now(),
+      user: user,
+    });
     return token;
   };
 
@@ -43,7 +48,23 @@ const router = new Router({prefix: '/api'});
 
 router.use(async (ctx, next) => {
   const header = ctx.request.get('Authorization');
+
   if (!header) return next();
+
+  const token = header.split(' ')[1];
+  const session = await Session.findOne({token}).populate('user');
+
+  if (!session) {
+    throw new ErrExistToken('Неверный аутентификационный токен');
+  };
+
+  await Session.findByIdAndUpdate(session, {
+    lastVisit: Date.now(),
+  }, {
+    omitUndefined: true,
+  });
+
+  ctx.user = session.user;
 
   return next();
 });
@@ -53,12 +74,13 @@ router.post('/login', login);
 router.get('/oauth/:provider', oauth);
 router.post('/oauth_callback', handleMongooseValidationError, oauthCallback);
 
-router.get('/me', me);
+router.get('/me', mustBeAuthenticated, me);
 
 app.use(router.routes());
 
 // this for HTML5 history in browser
 const fs = require('fs');
+const {populate} = require('./models/Session');
 
 const index = fs.readFileSync(path.join(__dirname, 'public/index.html'));
 app.use(async (ctx) => {
