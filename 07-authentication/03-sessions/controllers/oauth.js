@@ -5,8 +5,8 @@ module.exports.oauth = async function oauth(ctx, next) {
   const provider = ctx.params.provider;
 
   await passport.authenticate(
-      provider,
-      config.providers[provider].options,
+    provider,
+    config.providers[provider].options,
   )(ctx, next);
 
   ctx.status = 200;
@@ -27,7 +27,7 @@ module.exports.oauthCallback = async function oauthCallback(ctx, next) {
     }
 
     const token = await ctx.login(user);
-
+    // console.log(`user in controllers/oauth.js - ${user}`);
     ctx.body = {token};
   })(ctx, next);
 };
