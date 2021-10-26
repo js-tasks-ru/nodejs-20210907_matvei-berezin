@@ -8,15 +8,19 @@ const htmlToText = require('nodemailer-html-to-text').htmlToText;
 const SMTPTransport = require('nodemailer-smtp-transport');
 const StubTransport = require('nodemailer-stub-transport');
 
-const transportEngine = process.env.NODE_ENV === 'test' ?
+const transportEngine = process.env.NODE_ENV !== 'work' ?
   new StubTransport() :
   new SMTPTransport({
+
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
       user: config.mailer.user,
       pass: config.mailer.password,
+
+      user: 'matvei7berezin@gmail.com',
+      pass: 'xkomfqdbefyuuqgm',
     },
   });
 
@@ -41,8 +45,8 @@ transport.use('compile', htmlToText());
 * */
 module.exports = async function sendMail(options) {
   const html = pug.renderFile(
-      path.join(__dirname, '../templates', options.template) + '.pug',
-      options.locals || {},
+    path.join(__dirname, '../templates', options.template) + '.pug',
+    options.locals || {},
   );
 
   const message = {

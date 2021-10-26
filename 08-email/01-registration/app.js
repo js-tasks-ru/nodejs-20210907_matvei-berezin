@@ -33,7 +33,7 @@ app.use(async (ctx, next) => {
 });
 
 app.use((ctx, next) => {
-  ctx.login = async function(user) {
+  ctx.login = async function (user) {
     const token = uuid();
     await Session.create({token, user, lastVisit: new Date()});
 
@@ -44,6 +44,7 @@ app.use((ctx, next) => {
 });
 
 const router = new Router({prefix: '/api'});
+const routerCommon = new Router();
 
 router.use(async (ctx, next) => {
   const header = ctx.request.get('Authorization');
@@ -75,8 +76,10 @@ router.post('/oauth_callback', handleMongooseValidationError, oauthCallback);
 router.get('/me', mustBeAuthenticated, me);
 
 router.post('/register', handleMongooseValidationError, register);
-router.post('/confirm', confirm);
+routerCommon.get('/confirm/:token', confirm);
+// router.post('/confirm', confirm);
 
 app.use(router.routes());
+app.use(routerCommon.routes());
 
 module.exports = app;
