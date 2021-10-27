@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
       },
     ],
     unique: 'Такой email уже существует',
+    // unique: true,
   },
   displayName: {
     type: String,
