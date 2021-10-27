@@ -9,6 +9,11 @@ module.exports = async function handleMongooseValidationError(ctx, next) {
     const errors = {};
 
     for (const field of Object.keys(err.errors)) {
+
+      if (field === 'email') {
+        errors[field] = 'Такой email уже существует';
+        continue;
+      };
       errors[field] = err.errors[field].message;
     }
 

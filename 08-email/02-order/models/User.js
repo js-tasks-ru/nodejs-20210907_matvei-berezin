@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
         message: 'Некорректный email.',
       },
     ],
-    unique: 'Такой email уже существует',
+    // unique: 'Такой email уже существует',
+    unique: true,
   },
   displayName: {
     type: String,
@@ -39,14 +40,14 @@ const userSchema = new mongoose.Schema({
 function generatePassword(salt, password) {
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(
-        password, salt,
-        config.crypto.iterations,
-        config.crypto.length,
-        config.crypto.digest,
-        (err, key) => {
-          if (err) return reject(err);
-          resolve(key.toString('hex'));
-        },
+      password, salt,
+      config.crypto.iterations,
+      config.crypto.length,
+      config.crypto.digest,
+      (err, key) => {
+        if (err) return reject(err);
+        resolve(key.toString('hex'));
+      },
     );
   });
 }
@@ -65,7 +66,7 @@ userSchema.methods.setPassword = async function setPassword(password) {
   this.passwordHash = await generatePassword(this.salt, password);
 };
 
-userSchema.methods.checkPassword = async function(password) {
+userSchema.methods.checkPassword = async function (password) {
   if (!password) return false;
 
   const hash = await generatePassword(this.salt, password);
