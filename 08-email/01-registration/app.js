@@ -22,6 +22,9 @@ app.use(async (ctx, next) => {
     await next();
   } catch (err) {
     if (err.status) {
+
+      console.log('err.status - ', err.status);
+
       ctx.status = err.status;
       ctx.body = {error: err.message};
     } else {

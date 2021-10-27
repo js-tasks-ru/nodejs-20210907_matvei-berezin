@@ -17,8 +17,14 @@ module.exports = async function handleMongooseValidationError(ctx, next) {
     ctx.status = 400;
 
     for (const field of Object.keys(err.errors)) {
+      if (field === 'email') {
+        errors[field] = 'Такой email уже существует';
+        continue;
+      };
       errors[field] = err.errors[field].message;
     }
+
+    console.log('errors - ', errors);
     ctx.body = {
       errors: errors,
     };
