@@ -45,6 +45,7 @@ describe('email/registration', () => {
       });
 
       expect(response.data, 'ответ сервера содержит поле status').to.eql({status: 'ok'});
+
       expect(get(envelope, 'to[0]'), 'письмо отправлено на указанный email').to
         .equal(newUserData.email);
 
@@ -114,9 +115,12 @@ describe('email/registration', () => {
         await u.setPassword(newUserData.password);
         await u.save();
 
+        // const url = 'http://localhost:3000/confirm/' + newUserData.verificationToken;
         const response = await request({
           method: 'post',
+          // method: 'get',
           url: 'http://localhost:3000/api/confirm',
+          // url: url,
           data: {
             verificationToken: newUserData.verificationToken,
           },
@@ -133,7 +137,9 @@ describe('email/registration', () => {
     it('при запросе /confirm с неправильным токеном - ошибка', async () => {
       const response = await request({
         method: 'post',
+        // method: 'get',
         url: 'http://localhost:3000/api/confirm',
+        // url: 'http://localhost:3000/confirm/randomtoken',
         data: {
           verificationToken: 'randomtoken',
         },

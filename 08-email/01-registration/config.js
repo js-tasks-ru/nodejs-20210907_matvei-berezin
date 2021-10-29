@@ -36,7 +36,7 @@ module.exports = {
     },
   },
   mailer: {
-    user: '',
-    password: '',
+    user: process.env.GOOGLE_ACOUNT || '',
+    password: process.env.PASS_API_FOR_GOOGACOUNT || '',
   },
 };
